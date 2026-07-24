@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/YOUR_REPOSITORY_NAME/",
+  base: "/VimalTechAcademy/",
 });
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
