@@ -113,18 +113,28 @@ export const QuickContactMap: React.FC = () => {
               <p className="text-xs text-slate-600 mt-1">1st Floor, near Suresh-Sakuntala Hospital, Gondwa, Atrauli-Kothawan Road, Sandila, Hardoi, Uttar Pradesh, 241203, India.</p>
             </div>
 
-            {/* Map Placeholder Card */}
-            <div className="relative rounded-3xl overflow-hidden border border-slate-200 shadow-md bg-slate-100 h-72 flex items-center justify-center">
+            {/* Interactive Campus Map View */}
+            <div className="relative rounded-3xl overflow-hidden border border-slate-200 shadow-md bg-slate-100 h-80 flex items-center justify-center">
               <iframe
-                title="Institute Google Map Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.5620815183!2d77.2090213!3d28.6139391!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjhCsDM2JzUwLjIiTiA3N8KwMTInMzI0LjUiRQ!5e0!3m2!1sen!2sin!4v1650000000000!5m2!1sen!2sin"
-                className="w-full h-full border-0 filter grayscale opacity-90 hover:grayscale-0 transition-all duration-300"
+                title="Vimal Tech Academy Google Map Location"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3548.6687646856044!2d80.5992389!3d27.1981456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399eb99d6fe85b8d%3A0xa364bb8035db3ed4!2sVimal%20Tech%20Academy!5e0!3m2!1sen!2sin!4v1785290623864!5m2!1sen!2sin"
+                className="w-full h-full border-0 transition-all duration-300"
                 loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
               ></iframe>
-              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-4 py-2 rounded-xl shadow-md border border-slate-200 text-xs font-bold text-slate-900 flex items-center gap-2">
+              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl shadow-md border border-slate-200 text-xs font-bold text-slate-900 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-rose-600" />
-                <span>Vimal Tech Academy Campus Hub</span>
+                <span>Vimal Tech Academy</span>
               </div>
+              <a
+                href="https://maps.app.goo.gl/9tgxzHJtob7sTmNj9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-lg transition-all flex items-center gap-1.5"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Get Directions on Google Maps</span>
+              </a>
             </div>
           </div>
         </div>

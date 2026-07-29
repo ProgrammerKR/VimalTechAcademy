@@ -143,10 +143,15 @@ export const Footer: React.FC = () => {
               Contact Campus
             </h4>
             <div className="space-y-2.5 text-xs font-medium text-slate-300">
-              <p className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+              <a
+                href="https://maps.app.goo.gl/9tgxzHJtob7sTmNj9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2 hover:text-blue-400 transition-colors group"
+              >
+                <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                 <span>1st Floor, near Suresh-Sakuntala Hospital, Gondwa, Atrauli-Kothawan Road, Sandila, Hardoi, Uttar Pradesh, 241203, India</span>
-              </p>
+              </a>
               <p className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-blue-400 shrink-0" />
                 <a href="tel:+919580295393" className="hover:text-blue-400 transition-colors">+91 9580295393</a>

@@ -30,10 +30,28 @@ export const ContactPage: React.FC = () => {
             <div className="space-y-4 text-xs font-medium text-slate-700">
               <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
                 <MapPin className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                <div>
+                <div className="space-y-1">
                   <p className="font-bold text-slate-900">Campus Address</p>
-                  <p className="text-slate-600 mt-0.5">1st Floor, near Suresh-Sakuntala Hospital, Gondwa, Atrauli-Kothawan Road, Sandila, Hardoi, Uttar Pradesh, 241203, India</p>
+                  <p className="text-slate-600">1st Floor, near Suresh-Sakuntala Hospital, Gondwa, Atrauli-Kothawan Road, Sandila, Hardoi, Uttar Pradesh, 241203, India</p>
+                  <a
+                    href="https://maps.app.goo.gl/9tgxzHJtob7sTmNj9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800 pt-1"
+                  >
+                    <span>Open in Google Maps App</span> &rarr;
+                  </a>
                 </div>
+              </div>
+
+              <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm h-48">
+                <iframe
+                  title="Vimal Tech Academy Location Map"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3548.6687646856044!2d80.5992389!3d27.1981456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399eb99d6fe85b8d%3A0xa364bb8035db3ed4!2sVimal%20Tech%20Academy!5e0!3m2!1sen!2sin!4v1785290623864!5m2!1sen!2sin"
+                  className="w-full h-full border-0"
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                ></iframe>
               </div>
 
               <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
