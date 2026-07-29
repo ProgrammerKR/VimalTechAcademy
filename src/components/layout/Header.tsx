@@ -85,8 +85,12 @@ export const Header: React.FC = () => {
             onClick={() => navigateTo('home')}
             className="flex items-center gap-3 text-left group focus:outline-hidden"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
-              <Monitor className="w-6 h-6 stroke-[2.2]" />
+            <div className="relative group-hover:scale-105 transition-transform duration-300">
+              <img
+                src="/vimal-tech-logo.jpg"
+                alt="Vimal Tech Academy Logo"
+                className="w-12 h-12 rounded-full object-cover border-2 border-amber-400/80 shadow-md shadow-amber-500/10"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -94,6 +98,7 @@ export const Header: React.FC = () => {
                   Vimal Tech Academy
                 </span>
               </div>
+              <p className="text-[10px] text-slate-500 font-semibold tracking-wide">Turning Beginners Into Experts</p>
             </div>
           </button>
 

@@ -23,12 +23,14 @@ export const Footer: React.FC = () => {
           {/* Col 1: Brand & Credentials */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
-                <Monitor className="w-5 h-5 stroke-[2.2]" />
-              </div>
+              <img
+                src="/vimal-tech-logo.jpg"
+                alt="Vimal Tech Academy Logo"
+                className="w-11 h-11 rounded-full object-cover border-2 border-amber-400/80 shadow-md shadow-amber-500/10"
+              />
               <div>
                 <h3 className="text-lg font-bold text-white tracking-tight">Vimal Tech Academy</h3>
-                <p className="text-xs text-slate-400">Computer Education & Technical Skill Center</p>
+                <p className="text-xs text-amber-400 font-medium">Turning Beginners Into Experts</p>
               </div>
             </div>
 
