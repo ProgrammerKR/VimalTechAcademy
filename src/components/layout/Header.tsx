@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { PageView } from '../../types';
+import logoImg from '../../assets/vimal-tech-logo.jpg';
 import {
   Monitor,
   GraduationCap,
@@ -87,7 +88,7 @@ export const Header: React.FC = () => {
           >
             <div className="relative group-hover:scale-105 transition-transform duration-300">
               <img
-                src="/vimal-tech-logo.jpg"
+                src={logoImg}
                 alt="Vimal Tech Academy Logo"
                 className="w-12 h-12 rounded-full object-cover border-2 border-amber-400/80 shadow-md shadow-amber-500/10"
               />

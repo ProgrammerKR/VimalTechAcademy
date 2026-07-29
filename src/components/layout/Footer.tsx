@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import logoImg from '../../assets/vimal-tech-logo.jpg';
 import {
   Monitor,
   MapPin,
@@ -24,7 +25,7 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
               <img
-                src="/vimal-tech-logo.jpg"
+                src={logoImg}
                 alt="Vimal Tech Academy Logo"
                 className="w-11 h-11 rounded-full object-cover border-2 border-amber-400/80 shadow-md shadow-amber-500/10"
               />

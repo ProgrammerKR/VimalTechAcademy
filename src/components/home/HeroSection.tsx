@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import logoImg from '../../assets/vimal-tech-logo.jpg';
 import {
   Sparkles,
   ArrowRight,
@@ -90,7 +91,7 @@ export const HeroSection: React.FC = () => {
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-3">
                     <img
-                      src="/vimal-tech-logo.jpg"
+                      src={logoImg}
                       alt="Vimal Tech Academy Logo"
                       className="w-12 h-12 rounded-full object-cover border-2 border-amber-400/80 shadow-md shadow-amber-500/10"
                     />
