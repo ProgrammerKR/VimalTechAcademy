@@ -72,6 +72,7 @@ export interface Student {
   certificateIssued: boolean;
   certificateNo?: string;
   grade?: 'A+' | 'A' | 'B+' | 'B' | 'C';
+  password?: string;
 }
 
 export interface AdmissionApplication {

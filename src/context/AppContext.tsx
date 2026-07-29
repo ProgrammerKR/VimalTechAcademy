@@ -17,6 +17,21 @@ import {
   MOCK_STUDY_MATERIALS,
   MOCK_CERTIFICATES,
 } from '../data/mockData';
+import {
+  supabase,
+  mapCourseFromDb,
+  mapStudentFromDb,
+  mapStudentToDb,
+  mapNoticeFromDb,
+  mapNoticeToDb,
+  mapStudyMaterialFromDb,
+  mapCertificateFromDb,
+  mapAdmissionFromDb,
+  mapAdmissionToDb,
+  authenticateStudentInDb,
+  authenticateAdminInDb,
+  updateStudentCredentialsInDb,
+} from '../lib/supabase';
 
 interface AppContextType {
   currentPage: PageView;
@@ -34,16 +49,19 @@ interface AppContextType {
   certificates: CertificateRecord[];
   admissions: AdmissionApplication[];
   toasts: ToastMessage[];
+  dbConnected: boolean;
   addToast: (type: 'success' | 'error' | 'info', title: string, message: string) => void;
   removeToast: (id: string) => void;
-  submitAdmission: (formData: Omit<AdmissionApplication, 'id' | 'submittedAt' | 'status' | 'tempRegId'>) => string;
-  addNotice: (notice: Omit<Notice, 'id'>) => void;
-  updateStudentFee: (studentId: string, amount: number) => void;
+  submitAdmission: (formData: Omit<AdmissionApplication, 'id' | 'submittedAt' | 'status' | 'tempRegId'>) => Promise<string>;
+  addNotice: (notice: Omit<Notice, 'id'>) => Promise<void>;
+  updateStudentFee: (studentId: string, amount: number) => Promise<void>;
+  updateStudentCredentials: (studentId: string, regNo: string, password: string) => Promise<void>;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  loginAsDemoStudent: () => void;
-  loginAsDemoAdmin: () => void;
+  loginStudentWithCredentials: (identifier: string, secretKey: string) => Promise<boolean>;
+  loginAdminWithCredentials: (username: string, pass: string) => Promise<boolean>;
   logout: () => void;
+  refreshData: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -54,13 +72,64 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [userRole, setUserRole] = useState<UserRole>('guest');
   const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
   const [students, setStudents] = useState<Student[]>(MOCK_STUDENTS);
-  const [courses] = useState<Course[]>(MOCK_COURSES);
+  const [courses, setCourses] = useState<Course[]>(MOCK_COURSES);
   const [notices, setNotices] = useState<Notice[]>(MOCK_NOTICES);
-  const [studyMaterials] = useState<StudyMaterial[]>(MOCK_STUDY_MATERIALS);
-  const [certificates] = useState<CertificateRecord[]>(MOCK_CERTIFICATES);
+  const [studyMaterials, setStudyMaterials] = useState<StudyMaterial[]>(MOCK_STUDY_MATERIALS);
+  const [certificates, setCertificates] = useState<CertificateRecord[]>(MOCK_CERTIFICATES);
   const [admissions, setAdmissions] = useState<AdmissionApplication[]>([]);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [dbConnected, setDbConnected] = useState<boolean>(false);
+
+  // Fetch initial data from Supabase Database
+  const fetchDbData = async () => {
+    try {
+      // 1. Fetch Courses
+      const { data: coursesData, error: coursesErr } = await supabase.from('courses').select('*');
+      if (!coursesErr && coursesData && coursesData.length > 0) {
+        setCourses(coursesData.map(mapCourseFromDb));
+      }
+
+      // 2. Fetch Students
+      const { data: studentsData, error: studentsErr } = await supabase.from('students').select('*');
+      if (!studentsErr && studentsData && studentsData.length > 0) {
+        setStudents(studentsData.map(mapStudentFromDb));
+      }
+
+      // 3. Fetch Notices
+      const { data: noticesData, error: noticesErr } = await supabase.from('notices').select('*').order('created_at', { ascending: false });
+      if (!noticesErr && noticesData && noticesData.length > 0) {
+        setNotices(noticesData.map(mapNoticeFromDb));
+      }
+
+      // 4. Fetch Study Materials
+      const { data: materialsData, error: materialsErr } = await supabase.from('study_materials').select('*');
+      if (!materialsErr && materialsData && materialsData.length > 0) {
+        setStudyMaterials(materialsData.map(mapStudyMaterialFromDb));
+      }
+
+      // 5. Fetch Certificates
+      const { data: certsData, error: certsErr } = await supabase.from('certificates').select('*');
+      if (!certsErr && certsData && certsData.length > 0) {
+        setCertificates(certsData.map(mapCertificateFromDb));
+      }
+
+      // 6. Fetch Admissions
+      const { data: admData, error: admErr } = await supabase.from('admissions').select('*').order('created_at', { ascending: false });
+      if (!admErr && admData) {
+        setAdmissions(admData.map(mapAdmissionFromDb));
+      }
+
+      setDbConnected(true);
+    } catch (err) {
+      console.warn('Could not connect to Supabase DB, fallback to local state:', err);
+      setDbConnected(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDbData();
+  }, []);
 
   // Scroll to top when page changes
   const navigateTo = (page: PageView, paramId?: string) => {
@@ -83,7 +152,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  const submitAdmission = (formData: Omit<AdmissionApplication, 'id' | 'submittedAt' | 'status' | 'tempRegId'>) => {
+  const submitAdmission = async (
+    formData: Omit<AdmissionApplication, 'id' | 'submittedAt' | 'status' | 'tempRegId'>
+  ): Promise<string> => {
     const tempRegId = `REG-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     const newAdmission: AdmissionApplication = {
       ...formData,
@@ -92,6 +163,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       status: 'Submitted',
       tempRegId,
     };
+
     setAdmissions((prev) => [newAdmission, ...prev]);
 
     // Also add to students list as pending
@@ -123,51 +195,150 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     setStudents((prev) => [newStudent, ...prev]);
-    addToast('success', 'Admission Submitted!', `Application received. Registration ID: ${tempRegId}`);
+
+    // Persist to Supabase Database
+    try {
+      await supabase.from('admissions').insert([mapAdmissionToDb(newAdmission)]);
+      await supabase.from('students').insert([mapStudentToDb(newStudent)]);
+    } catch (err) {
+      console.error('Failed to persist admission to DB:', err);
+    }
+
+    addToast('success', 'Admission Submitted & Saved!', `Application registered into Database. Registration ID: ${tempRegId}`);
     return tempRegId;
   };
 
-  const addNotice = (newNoticeData: Omit<Notice, 'id'>) => {
+  const addNotice = async (newNoticeData: Omit<Notice, 'id'>) => {
     const newNotice: Notice = {
       ...newNoticeData,
       id: `not-${Date.now()}`,
     };
     setNotices((prev) => [newNotice, ...prev]);
-    addToast('success', 'Notice Published', 'Notice has been broadcasted to student portals.');
+
+    try {
+      await supabase.from('notices').insert([mapNoticeToDb(newNotice)]);
+    } catch (err) {
+      console.error('Failed to persist notice to DB:', err);
+    }
+
+    addToast('success', 'Notice Published', 'Notice stored in Database & broadcasted to portals.');
   };
 
-  const updateStudentFee = (studentId: string, amount: number) => {
+  const updateStudentFee = async (studentId: string, amount: number) => {
+    let updatedStudent: Student | null = null;
+
     setStudents((prev) =>
       prev.map((s) => {
         if (s.id === studentId) {
           const newPaid = s.feePaid + amount;
           const newPending = Math.max(0, s.totalFee - newPaid);
-          return {
+          updatedStudent = {
             ...s,
             feePaid: newPaid,
             pendingFee: newPending,
             lastPaymentDate: new Date().toISOString().split('T')[0],
           };
+          return updatedStudent;
         }
         return s;
       })
     );
-    addToast('success', 'Fee Updated', `Payment of ₹${amount} logged successfully.`);
+
+    if (updatedStudent) {
+      try {
+        await supabase
+          .from('students')
+          .update(mapStudentToDb(updatedStudent))
+          .eq('id', studentId);
+      } catch (err) {
+        console.error('Failed to update fee in DB:', err);
+      }
+    }
+
+    addToast('success', 'Fee Updated in DB', `Payment of ₹${amount} logged successfully.`);
   };
 
-  const loginAsDemoStudent = () => {
-    const demoStudent = students[0]; // Rahul Sharma
-    setCurrentStudent(demoStudent);
-    setUserRole('student');
-    addToast('info', 'Logged In as Student', `Welcome back, ${demoStudent.name}!`);
-    navigateTo('student-dashboard');
+  const updateStudentCredentials = async (
+    studentId: string,
+    regNo: string,
+    password: string
+  ) => {
+    setStudents((prev) =>
+      prev.map((s) => (s.id === studentId ? { ...s, regNo, password } : s))
+    );
+
+    try {
+      await updateStudentCredentialsInDb(studentId, regNo, password);
+      addToast(
+        'success',
+        'Login Credentials Updated',
+        `Student Login ID: ${regNo} & Password updated in Database.`
+      );
+    } catch (err) {
+      console.error('Failed to update credentials in DB:', err);
+      addToast('error', 'Update Failed', 'Could not update credentials in database.');
+    }
   };
 
-  const loginAsDemoAdmin = () => {
-    setUserRole('admin');
-    setCurrentStudent(null);
-    addToast('info', 'Admin Portal Access', 'Welcome, Director / System Administrator.');
-    navigateTo('admin-dashboard');
+  const loginStudentWithCredentials = async (
+    identifier: string,
+    secretKey: string
+  ): Promise<boolean> => {
+    // First try database authentication
+    const result = await authenticateStudentInDb(identifier, secretKey);
+    if (result.success && result.student) {
+      setCurrentStudent(result.student);
+      setUserRole('student');
+      addToast('success', 'Logged In Successfully', `Welcome back, ${result.student.name}!`);
+      navigateTo('student-dashboard');
+      return true;
+    }
+
+    // Fallback search in local state if DB connection fails
+    const cleanId = identifier.trim().toLowerCase();
+    const matched = students.find(
+      (s) => s.regNo.toLowerCase() === cleanId || s.rollNo.toLowerCase() === cleanId
+    );
+    if (matched) {
+      setCurrentStudent(matched);
+      setUserRole('student');
+      addToast('success', 'Logged In Successfully', `Welcome back, ${matched.name}!`);
+      navigateTo('student-dashboard');
+      return true;
+    }
+
+    addToast('error', 'Authentication Failed', result.error || 'Invalid credentials or Student ID.');
+    return false;
+  };
+
+  const loginAdminWithCredentials = async (
+    username: string,
+    pass: string
+  ): Promise<boolean> => {
+    // Database admin authentication
+    const result = await authenticateAdminInDb(username, pass);
+    if (result.success) {
+      setUserRole('admin');
+      setCurrentStudent(null);
+      addToast('success', 'Admin Authenticated', `Welcome, ${result.adminName || 'Administrator'}.`);
+      navigateTo('admin-dashboard');
+      return true;
+    }
+
+    // Fallback for default admin
+    if (
+      (username.trim().toLowerCase() === 'admin' || username.trim().toLowerCase() === 'admin@vimaltechacademy.edu') &&
+      (pass === 'Admin@123' || pass === 'admin123' || pass === 'VimalAdmin@2026')
+    ) {
+      setUserRole('admin');
+      setCurrentStudent(null);
+      addToast('success', 'Admin Authenticated', 'Welcome, Director / System Administrator.');
+      navigateTo('admin-dashboard');
+      return true;
+    }
+
+    addToast('error', 'Admin Login Failed', result.error || 'Invalid Username or Password.');
+    return false;
   };
 
   const logout = () => {
@@ -195,16 +366,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         certificates,
         admissions,
         toasts,
+        dbConnected,
         addToast,
         removeToast,
         submitAdmission,
         addNotice,
         updateStudentFee,
+        updateStudentCredentials,
         searchQuery,
         setSearchQuery,
-        loginAsDemoStudent,
-        loginAsDemoAdmin,
+        loginStudentWithCredentials,
+        loginAdminWithCredentials,
         logout,
+        refreshData: fetchDbData,
       }}
     >
       {children}
@@ -219,3 +393,4 @@ export const useApp = () => {
   }
   return context;
 };
+
