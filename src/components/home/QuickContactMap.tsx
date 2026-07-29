@@ -110,7 +110,7 @@ export const QuickContactMap: React.FC = () => {
                 Visit Campus
               </span>
               <h3 className="text-2xl font-bold text-slate-900 mt-2">Locate Vimal Tech Academy</h3>
-              <p className="text-xs text-slate-600 mt-1">Conveniently situated in City Center Education Hub, accessible via main bus terminal and metro station.</p>
+              <p className="text-xs text-slate-600 mt-1">1st Floor, near Suresh-Sakuntala Hospital, Gondwa, Atrauli-Kothawan Road, Sandila, Hardoi, Uttar Pradesh, 241203, India.</p>
             </div>
 
             {/* Map Placeholder Card */}

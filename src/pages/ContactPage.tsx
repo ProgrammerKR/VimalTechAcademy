@@ -32,7 +32,7 @@ export const ContactPage: React.FC = () => {
                 <MapPin className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-slate-900">Campus Address</p>
-                  <p className="text-slate-600 mt-0.5">124, Education Hub, Main Market Chowk, Sector 4, City Center</p>
+                  <p className="text-slate-600 mt-0.5">1st Floor, near Suresh-Sakuntala Hospital, Gondwa, Atrauli-Kothawan Road, Sandila, Hardoi, Uttar Pradesh, 241203, India</p>
                 </div>
               </div>
 
