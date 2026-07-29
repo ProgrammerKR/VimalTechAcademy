@@ -8,15 +8,13 @@ import {
   DollarSign,
   Bell,
   Search,
-  Plus,
-  Edit,
   CheckCircle2,
   X,
-  CreditCard,
   ShieldCheck,
-  Building2,
-  Calendar,
-  Layers,
+  KeyRound,
+  Eye,
+  EyeOff,
+  Lock,
 } from 'lucide-react';
 
 export const AdminDashboardView: React.FC = () => {
@@ -26,11 +24,12 @@ export const AdminDashboardView: React.FC = () => {
     notices,
     addNotice,
     updateStudentFee,
+    updateStudentCredentials,
     addToast,
     submitAdmission,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'students' | 'courses' | 'notices' | 'reports'>('students');
+  const [activeTab, setActiveTab] = useState<'students' | 'courses' | 'notices'>('students');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
@@ -55,6 +54,13 @@ export const AdminDashboardView: React.FC = () => {
     courseId: courses[0]?.id || 'course-adca',
     qualification: '12th Pass',
   });
+
+  // Credential Management Modal State
+  const [isCredsModalOpen, setIsCredsModalOpen] = useState(false);
+  const [selectedStudentForCreds, setSelectedStudentForCreds] = useState<any | null>(null);
+  const [credsRegNo, setCredsRegNo] = useState('');
+  const [credsPassword, setCredsPassword] = useState('');
+  const [showCredsPassword, setShowCredsPassword] = useState(false);
 
   const filteredStudents = students.filter((s) => {
     const matchesStatus = statusFilter === 'All' || s.status === statusFilter;
@@ -98,6 +104,23 @@ export const AdminDashboardView: React.FC = () => {
     setIsAddStudentModalOpen(false);
   };
 
+  const handleCredsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedStudentForCreds && credsRegNo.trim() && credsPassword.trim()) {
+      updateStudentCredentials(selectedStudentForCreds.id, credsRegNo.trim(), credsPassword.trim());
+      setIsCredsModalOpen(false);
+      setSelectedStudentForCreds(null);
+    }
+  };
+
+  const openCredsModal = (student: any) => {
+    setSelectedStudentForCreds(student);
+    setCredsRegNo(student.regNo);
+    setCredsPassword(student.password || '123456');
+    setShowCredsPassword(false);
+    setIsCredsModalOpen(true);
+  };
+
   return (
     <div className="py-10 bg-slate-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -111,7 +134,7 @@ export const AdminDashboardView: React.FC = () => {
             </div>
             <h1 className="text-2xl font-bold tracking-tight">Vimal Tech Master Control Dashboard</h1>
             <p className="text-xs text-slate-300">
-              Manage student admissions, course catalogs, fee receipts, and official circular announcements.
+              Manage student admissions, credentials, fee receipts, course catalogs, and official notices.
             </p>
           </div>
 
@@ -180,7 +203,7 @@ export const AdminDashboardView: React.FC = () => {
         {/* Tab Switcher */}
         <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
           {[
-            { id: 'students', label: 'Student Management', icon: Users },
+            { id: 'students', label: 'Student & Credentials Management', icon: Users },
             { id: 'courses', label: 'Course Catalog', icon: BookOpen },
             { id: 'notices', label: 'Notices Broadcast', icon: Bell },
           ].map((tab) => (
@@ -199,7 +222,7 @@ export const AdminDashboardView: React.FC = () => {
           ))}
         </div>
 
-        {/* Tab 1: STUDENT MANAGEMENT TABLE */}
+        {/* Tab 1: STUDENT MANAGEMENT & CREDENTIALS TABLE */}
         {activeTab === 'students' && (
           <div className="bg-white rounded-3xl border border-slate-200/80 shadow-md p-6 space-y-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -233,8 +256,8 @@ export const AdminDashboardView: React.FC = () => {
                   <tr>
                     <th className="p-3">Student Info</th>
                     <th className="p-3">Course Enrolled</th>
-                    <th className="p-3">Fee Paid</th>
-                    <th className="p-3">Pending Fee</th>
+                    <th className="p-3">Login Password</th>
+                    <th className="p-3">Fee Status</th>
                     <th className="p-3">Status</th>
                     <th className="p-3 text-right">Actions</th>
                   </tr>
@@ -247,7 +270,7 @@ export const AdminDashboardView: React.FC = () => {
                           <img src={s.photoUrl} alt={s.name} className="w-9 h-9 rounded-xl object-cover border" />
                           <div>
                             <p className="font-bold text-slate-900">{s.name}</p>
-                            <p className="text-[10px] font-mono text-slate-400">{s.regNo}</p>
+                            <p className="text-[10px] font-mono text-blue-600 font-bold">ID: {s.regNo}</p>
                           </div>
                         </div>
                       </td>
@@ -257,9 +280,21 @@ export const AdminDashboardView: React.FC = () => {
                         <p className="text-[10px] text-slate-400">Batch: {s.batchTiming}</p>
                       </td>
 
-                      <td className="p-3 font-bold text-slate-900">₹{s.feePaid.toLocaleString()}</td>
+                      <td className="p-3 font-mono text-slate-700">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-slate-100 border border-slate-200 text-[11px] font-bold">
+                          <Lock className="w-3 h-3 text-slate-500" />
+                          {s.password || '123456'}
+                        </span>
+                      </td>
 
-                      <td className="p-3 font-extrabold text-rose-600">₹{s.pendingFee.toLocaleString()}</td>
+                      <td className="p-3">
+                        <p className="font-bold text-slate-900">Paid: ₹{s.feePaid.toLocaleString()}</p>
+                        {s.pendingFee > 0 ? (
+                          <p className="text-[10px] font-bold text-rose-600">Pending: ₹{s.pendingFee.toLocaleString()}</p>
+                        ) : (
+                          <p className="text-[10px] font-bold text-emerald-600">Fully Paid</p>
+                        )}
+                      </td>
 
                       <td className="p-3">
                         <span
@@ -276,15 +311,26 @@ export const AdminDashboardView: React.FC = () => {
                       </td>
 
                       <td className="p-3 text-right">
-                        <button
-                          onClick={() => {
-                            setSelectedStudentForFee(s);
-                            setIsFeeModalOpen(true);
-                          }}
-                          className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-[11px] rounded-lg transition-colors border border-blue-200"
-                        >
-                          Log Payment
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => openCredsModal(s)}
+                            className="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-[11px] rounded-lg transition-colors border border-indigo-200 flex items-center gap-1"
+                            title="Manage Login ID & Password"
+                          >
+                            <KeyRound className="w-3.5 h-3.5" />
+                            <span>Set Login</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setSelectedStudentForFee(s);
+                              setIsFeeModalOpen(true);
+                            }}
+                            className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-[11px] rounded-lg transition-colors border border-blue-200"
+                          >
+                            Log Payment
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -329,7 +375,75 @@ export const AdminDashboardView: React.FC = () => {
           </div>
         )}
 
-        {/* MODAL 1: FEE LOG DIALOG */}
+        {/* MODAL 1: STUDENT LOGIN CREDENTIALS MANAGEMENT */}
+        {isCredsModalOpen && selectedStudentForCreds && (
+          <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <KeyRound className="w-5 h-5 text-indigo-600" />
+                  <h3 className="text-base font-bold text-slate-900">Manage Student Credentials</h3>
+                </div>
+                <button onClick={() => setIsCredsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-100 text-xs space-y-1 text-indigo-900">
+                <p>Student: <strong>{selectedStudentForCreds.name}</strong></p>
+                <p className="text-[11px] text-indigo-700">Set the Login ID and Password for this student to access their portal.</p>
+              </div>
+
+              <form onSubmit={handleCredsSubmit} className="space-y-4 pt-1">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Student Login ID (Registration No)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={credsRegNo}
+                    onChange={(e) => setCredsRegNo(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Login Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showCredsPassword ? 'text' : 'password'}
+                      required
+                      value={credsPassword}
+                      onChange={(e) => setCredsPassword(e.target.value)}
+                      className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-indigo-500 font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCredsPassword(!showCredsPassword)}
+                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 p-1"
+                      title={showCredsPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showCredsPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                >
+                  <KeyRound className="w-4 h-4" />
+                  <span>Save Login Credentials to Database</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL 2: FEE LOG DIALOG */}
         {isFeeModalOpen && selectedStudentForFee && (
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
@@ -369,7 +483,7 @@ export const AdminDashboardView: React.FC = () => {
           </div>
         )}
 
-        {/* MODAL 2: NOTICE PUBLISHER */}
+        {/* MODAL 3: NOTICE PUBLISHER */}
         {isNoticeModalOpen && (
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4">
@@ -430,7 +544,7 @@ export const AdminDashboardView: React.FC = () => {
           </div>
         )}
 
-        {/* MODAL 3: ADD NEW STUDENT */}
+        {/* MODAL 4: ADD NEW STUDENT */}
         {isAddStudentModalOpen && (
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
@@ -494,6 +608,28 @@ export const AdminDashboardView: React.FC = () => {
                         </option>
                       ))}
                     </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Initial Login Password *</label>
+                  <div className="relative">
+                    <input
+                      type={showCredsPassword ? 'text' : 'password'}
+                      required
+                      placeholder="Assign student login password"
+                      value={credsPassword || '123456'}
+                      onChange={(e) => setCredsPassword(e.target.value)}
+                      className="w-full pl-3 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCredsPassword(!showCredsPassword)}
+                      className="absolute right-3 top-2 text-slate-400 hover:text-slate-600 p-0.5"
+                      title={showCredsPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showCredsPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
                 </div>
 
