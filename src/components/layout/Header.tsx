@@ -36,7 +36,6 @@ export const Header: React.FC = () => {
 
   const navLinks: { label: string; page: PageView; icon?: React.ReactNode }[] = [
     { label: 'Home', page: 'home' },
-    { label: 'About Us', page: 'about' },
     { label: 'Courses', page: 'courses' },
     { label: 'Online Admission', page: 'admission' },
     { label: 'Certificates', page: 'certificates' },
@@ -47,10 +46,10 @@ export const Header: React.FC = () => {
 
   const filteredSearchCourses = searchQuery.trim()
     ? courses.filter(
-        (c) =>
-          c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          c.code.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      (c) =>
+        c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.code.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     : [];
 
   return (
@@ -63,12 +62,12 @@ export const Header: React.FC = () => {
               <Bell className="w-3 h-3 text-amber-300 animate-pulse" /> Latest Notice
             </span>
             <p className="text-slate-200 truncate font-medium">
-              New Batches Starting for Tally Prime with GST & ADCA | Admissions Open 2026-27 | Government Recognized ISO Certified Institute
+              New Batches Starting for Tally Prime with GST & ADCA | Admissions Open 2026-27
             </p>
           </div>
           <div className="flex items-center gap-4 shrink-0 text-slate-300 font-medium text-[11px]">
             <a href="tel:+919876543210" className="flex items-center gap-1 hover:text-white transition-colors">
-              <PhoneCall className="w-3 h-3 text-blue-400" /> +91 98765 43210
+              <PhoneCall className="w-3 h-3 text-blue-400" /> +91 9580295393
             </a>
             <span className="text-slate-600">|</span>
             <button onClick={() => navigateTo('faq')} className="hover:text-white transition-colors">
@@ -94,11 +93,7 @@ export const Header: React.FC = () => {
                 <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
                   Vimal Tech Academy
                 </span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 uppercase tracking-wider hidden sm:inline-block">
-                  ISO 9001:2015
-                </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium">Computer Coaching Institute</p>
             </div>
           </button>
 
@@ -110,11 +105,10 @@ export const Header: React.FC = () => {
                 <button
                   key={link.page}
                   onClick={() => navigateTo(link.page)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-blue-50 text-blue-700 font-semibold'
-                      : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
-                  }`}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
+                    ? 'bg-blue-50 text-blue-700 font-semibold'
+                    : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
+                    }`}
                 >
                   {link.label}
                 </button>
@@ -283,11 +277,10 @@ export const Header: React.FC = () => {
                 navigateTo(link.page);
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold transition-colors flex items-center justify-between ${
-                currentPage === link.page
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-slate-700 hover:bg-slate-50'
-              }`}
+              className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold transition-colors flex items-center justify-between ${currentPage === link.page
+                ? 'bg-blue-50 text-blue-700'
+                : 'text-slate-700 hover:bg-slate-50'
+                }`}
             >
               <span>{link.label}</span>
               <Sparkles className="w-3.5 h-3.5 text-blue-400 opacity-0 group-hover:opacity-100" />

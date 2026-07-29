@@ -3,10 +3,10 @@ import { Users, Award, BookOpen, CheckCircle, Trophy, Building2 } from 'lucide-r
 
 export const StatsSection: React.FC = () => {
   const stats = [
-    { label: 'Certified Alumni', value: '5,200+', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Certified Alumni', value: '50+', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
     { label: 'Active Courses', value: '12+', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-    { label: 'Job Placements', value: '92%', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Years Experience', value: '12+ Yrs', icon: Building2, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Job Placements', value: '82%', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Years Experience', value: '3+ Yrs', icon: Building2, color: 'text-amber-600', bg: 'bg-amber-50' },
   ];
 
   return (

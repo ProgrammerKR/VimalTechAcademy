@@ -142,19 +142,19 @@ export const Footer: React.FC = () => {
             <div className="space-y-2.5 text-xs font-medium text-slate-300">
               <p className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                <span>124, Education Hub, Main Market Chowk, Sector 4, City Center</span>
+                <span>1st foor, near Suresh-Sakuntala Hospital, Gondwa, Atrauli-Kothawan Road, Sandila, Hardoi, Uttar Pradesh, 241203, India </span>
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-blue-400 shrink-0" />
-                <span>+91 98765 43210 / +91 98123 45678</span>
+                <span>+91 9580295393</span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-blue-400 shrink-0" />
-                <span>admissions@vimaltechacademy.edu</span>
+                <span>contact@vimaltechacademy.com</span>
               </p>
               <p className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-blue-400 shrink-0" />
-                <span>Mon - Sat: 07:00 AM - 08:00 PM</span>
+                <span>Mon - Sat: 07:00 AM - 06:00 PM</span>
               </p>
             </div>
           </div>

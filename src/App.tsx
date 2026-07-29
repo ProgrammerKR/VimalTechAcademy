@@ -7,7 +7,6 @@ import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
-import { DemoQuickBar } from './components/common/DemoQuickBar';
 import { ToastContainer } from './components/common/ToastContainer';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 import { BackToTop } from './components/common/BackToTop';
@@ -79,7 +78,6 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-white text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900">
-      <DemoQuickBar />
       <Header />
       <main className="flex-1">{renderPage()}</main>
       <Footer />

@@ -3,7 +3,7 @@ import { MessageSquare } from 'lucide-react';
 
 export const WhatsAppButton: React.FC = () => {
   const handleWhatsApp = () => {
-    const phoneNumber = '919876543210';
+    const phoneNumber = '919580295393';
     const message = encodeURIComponent(
       'Hello Vimal Tech Academy! I want to enquire about Computer Courses & Admissions.'
     );
